@@ -1,8 +1,8 @@
 {
   "weather": {
-    "apikey": "52aa7e5a67e5dee895ad1e530c05b959",
-    "lat": "21.0245",
-    "lon": "105.8412",
+    "apikey": "KEY",
+    "lat": "LATITUDE",
+    "lon": "LONGITUDE",
     "unit": "metric"
   },
   "bar": {
