@@ -27,7 +27,7 @@ Item {
 
     onTriggered: {
       progress.value = player && player.length > 0
-        ? player.position / player.length * 100
+        ? player.length / player.position * 100
         : 0
     }
   }
