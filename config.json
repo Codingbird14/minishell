@@ -1,0 +1,20 @@
+{
+  "weather": {
+    "apikey": "52aa7e5a67e5dee895ad1e530c05b959",
+    "lat": "21.0245",
+    "lon": "105.8412",
+    "unit": "metric"
+  },
+  "bar": {
+    "font": "Jetbrains Mono Nerd Font",
+    "12hour": true,
+    "alpha": 0.6,
+    "radius": 5
+  },
+  "dashboard": {
+    "font": "Jetbrains Mono Nerd Font",
+    "alpha": 0.6,
+    "spacing": 15,
+    "radius": 5
+  }
+}
