@@ -11,7 +11,7 @@ Scope {
   property var theme
   property var config
   property var configFile: "./config.json"
-  property var scripts: "./scripts/"
+  property var scripts: "/scripts/"
   
   FileView {
     id: pywal
