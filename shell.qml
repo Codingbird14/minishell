@@ -26,7 +26,17 @@ Scope {
 
   Process {
     id: weather
-    command: ["bash", Qt.resolvedUrl(root.scripts + "weather_daemon.sh")]
+    running: true
+    command: ["bash", Quickshell.shellDir + "/scripts/get_weather.sh"]
+  }
+
+  Timer {
+    interval: 1800000
+    running: true
+    repeat: true
+    onTriggered: {
+      weather.running = true
+    }
   }
 
   FileView {

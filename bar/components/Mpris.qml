@@ -14,65 +14,68 @@ Item {
   property var fg
   property var radius
 
+  // Dynamically retrieve the active MPRIS player
   property MprisPlayer player: {
-    let keys = Object.keys(Mpris.players.values);
-    if (keys.length > 0)
-      return Mpris.players.values[keys[0]];
-    return null;
+    let players = Mpris.players.values;
+    return players.length > 0 ? players[0] : null;
   }
-  Timer {
-    interval: 250
-    running: true//player != null
-    repeat: true
 
+  // Trigger position updates every frame when music is playing
+  FrameAnimation {
+    running: root.player && root.player.playbackState === MprisPlaybackState.Playing
     onTriggered: {
-      progress.value = player && player.length > 0
-        ? player.length / player.position * 100
-        : 0
+      if (root.player) {
+        root.player.positionChanged()
+      }
     }
   }
+
   RowLayout {
     anchors.verticalCenter: parent.verticalCenter
 
-    
-  Rectangle {
-    id: clippingWrapper
-    implicitWidth: 30
-    implicitHeight: 30
-    radius: root.radius
-    color: "transparent" // Ensures the wrapper background is transparent
+    ClippingWrapperRectangle {
+      id: clippingWrapper
+      implicitWidth: 30
+      implicitHeight: 30
+      radius: root.radius
+      color: "transparent"
 
-    layer.enabled: true
-    layer.smooth: true
+      Item {
+        implicitWidth: 30
+        implicitHeight: 30
 
-    // Only active when a track and artwork URL exist
-    Image {
-        anchors.fill: parent
-        fillMode: Image.PreserveAspectCrop
-        visible: player && player.trackArtUrl
-        source: {
-            if (!player || !player.trackArtUrl) return "";
-            return player.trackArtUrl.toString().replace("https://", "http://");
+        Image {
+          anchors.fill: parent
+          fillMode: Image.PreserveAspectCrop
+          visible: !!(root.player && root.player.trackArtUrl)
+          source: {
+            if (!root.player || !root.player.trackArtUrl) return "";
+            return root.player.trackArtUrl.toString().replace("https://", "http://");
+          }
         }
-    }
 
-    // Active when nothing is playing or artwork is missing
-    Text {
-        anchors.centerIn: parent
-        visible: !player || !player.trackArtUrl
-        font.family: "Symbols Nerd Font" // Use your system's exact Nerd Font name
-        font.pixelSize: 20
-        color: theme.colors.color11
-        text: ""   // Nerd Font music icon code (nf-fa-music)
+        Text {
+          anchors.centerIn: parent
+          visible: !root.player || !root.player.trackArtUrl
+          font {
+            family: root.font
+            pixelSize: 20
+          }
+          color: theme.colors.color11
+          text: ""
+        }
+      }
     }
-}
-
 
     ColumnLayout {
       Text {
-        text: player ? player.trackTitle.length > 16 ? player.trackTitle.substring(0, 14) + ".." : player.trackTitle : "" || "Not Playing"
+        text: {
+          if (!root.player || !root.player.trackTitle) return "Not Playing";
+          return root.player.trackTitle.length > 16 
+            ? root.player.trackTitle.substring(0, 14) + ".." 
+            : root.player.trackTitle;
+        }
         color: root.fg
-
         font {
           family: root.font
           pixelSize: 15
@@ -90,8 +93,9 @@ Item {
 
         hoverEnabled: true
 
-        value: player && player.length > 0
-          ? (player.position / player.length) * 100
+        // Clean reactive binding to position
+        value: (root.player && root.player.length > 0)
+          ? (root.player.position / root.player.length) * 100
           : 0
 
         background: Rectangle {
@@ -101,7 +105,7 @@ Item {
           width: progress.availableWidth
           implicitHeight: 3
           radius: 5
- 
+
           color: root.sliderbg
 
           Rectangle {
